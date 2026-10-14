@@ -1,0 +1,106 @@
+{
+  "SmartPlayer_vs_RandomPlayer": {
+    "agent_a": "SmartPlayer (RL+MCTS)",
+    "agent_b": "RandomPlayer",
+    "num_games": 8,
+    "a_wins": 8,
+    "b_wins": 0,
+    "draws": 0,
+    "a_win_rate": 100.0,
+    "b_win_rate": 0.0,
+    "draw_rate": 0.0,
+    "a_black_wins": 4,
+    "a_white_wins": 4,
+    "b_black_wins": 0,
+    "b_white_wins": 0
+  },
+  "SmartPlayer_vs_SimplePlayer": {
+    "agent_a": "SmartPlayer (RL+MCTS)",
+    "agent_b": "SimplePlayer",
+    "num_games": 8,
+    "a_wins": 8,
+    "b_wins": 0,
+    "draws": 0,
+    "a_win_rate": 100.0,
+    "b_win_rate": 0.0,
+    "draw_rate": 0.0,
+    "a_black_wins": 4,
+    "a_white_wins": 4,
+    "b_black_wins": 0,
+    "b_white_wins": 0
+  },
+  "D_vs_A": {
+    "agent_a": "D. SmartPlayer (RL+MCTS)",
+    "agent_b": "A. Heuristic Search",
+    "num_games": 8,
+    "a_wins": 8,
+    "b_wins": 0,
+    "draws": 0,
+    "a_win_rate": 100.0,
+    "b_win_rate": 0.0,
+    "draw_rate": 0.0,
+    "a_black_wins": 4,
+    "a_white_wins": 4,
+    "b_black_wins": 0,
+    "b_white_wins": 0
+  },
+  "D_vs_B": {
+    "agent_a": "D. SmartPlayer (RL+MCTS)",
+    "agent_b": "B. Pure SL CNN",
+    "num_games": 8,
+    "a_wins": 8,
+    "b_wins": 0,
+    "draws": 0,
+    "a_win_rate": 100.0,
+    "b_win_rate": 0.0,
+    "draw_rate": 0.0,
+    "a_black_wins": 4,
+    "a_white_wins": 4,
+    "b_black_wins": 0,
+    "b_white_wins": 0
+  },
+  "D_vs_C": {
+    "agent_a": "D. SmartPlayer (RL+MCTS)",
+    "agent_b": "C. SL CNN + MCTS",
+    "num_games": 8,
+    "a_wins": 8,
+    "b_wins": 0,
+    "draws": 0,
+    "a_win_rate": 100.0,
+    "b_win_rate": 0.0,
+    "draw_rate": 0.0,
+    "a_black_wins": 4,
+    "a_white_wins": 4,
+    "b_black_wins": 0,
+    "b_white_wins": 0
+  },
+  "C_vs_B": {
+    "agent_a": "C. SL CNN + MCTS",
+    "agent_b": "B. Pure SL CNN",
+    "num_games": 8,
+    "a_wins": 0,
+    "b_wins": 8,
+    "draws": 0,
+    "a_win_rate": 0.0,
+    "b_win_rate": 100.0,
+    "draw_rate": 0.0,
+    "a_black_wins": 0,
+    "a_white_wins": 0,
+    "b_black_wins": 4,
+    "b_white_wins": 4
+  },
+  "MCTS_Simulation_Scaling": {
+    "sims_50": {
+      "simulations": 50,
+      "latency_ms": 157.33
+    },
+    "sims_100": {
+      "simulations": 100,
+      "latency_ms": 145.77
+    },
+    "sims_200": {
+      "simulations": 200,
+      "latency_ms": 144.47
+    }
+  }
+}

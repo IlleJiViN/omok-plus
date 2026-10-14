@@ -1,0 +1,18 @@
+[
+  {
+    "iteration": 1,
+    "new_samples": 3368,
+    "buffer_size": 3368,
+    "arena_win_rate": 1.0,
+    "promoted": true,
+    "time_sec": 143.73745369911194
+  },
+  {
+    "iteration": 2,
+    "new_samples": 2992,
+    "buffer_size": 6360,
+    "arena_win_rate": 0.5,
+    "promoted": true,
+    "time_sec": 91.41177439689636
+  }
+]
