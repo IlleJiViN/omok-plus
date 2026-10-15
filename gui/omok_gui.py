@@ -387,6 +387,21 @@ class OmokGUI:
         self.last_timer_tick = time.time()
 
         self.history_text.delete("1.0", tk.END)
+
+        # Setup auto-save replay file in logs/replays/
+        replays_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "logs", "replays")
+        os.makedirs(replays_dir, exist_ok=True)
+        timestamp = time.strftime("%Y%m%d_%H%M%S")
+        self.replay_filepath = os.path.join(replays_dir, f"replay_{timestamp}.txt")
+        try:
+            with open(self.replay_filepath, "w", encoding="utf-8") as f:
+                f.write(f"=== Omok++ Match Replay [{time.strftime('%Y-%m-%d %H:%M:%S')}] ===\n")
+                f.write(f"Mode: {self.ai_combo.get()}\n")
+                f.write(f"Human Color: {'White' if self.human_player == Board.WHITE else 'Black'}\n")
+                f.write("=" * 50 + "\n\n")
+        except Exception:
+            self.replay_filepath = None
+
         self._init_ai_player()
         self._update_scoreboard()
         self._redraw_board()
@@ -481,6 +496,14 @@ class OmokGUI:
         self.history_text.insert(tk.END, log_entry)
         self.history_text.see(tk.END)
 
+        # Write to replay file
+        if hasattr(self, 'replay_filepath') and self.replay_filepath:
+            try:
+                with open(self.replay_filepath, "a", encoding="utf-8") as f:
+                    f.write(log_entry)
+            except Exception:
+                pass
+
         # Check terminal state
         is_over, winner = self.board.check_game_status()
 
@@ -488,6 +511,14 @@ class OmokGUI:
         self._update_scoreboard()
 
         if is_over:
+            if hasattr(self, 'replay_filepath') and self.replay_filepath:
+                try:
+                    with open(self.replay_filepath, "a", encoding="utf-8") as f:
+                        w_str = "흑 승리" if winner == Board.BLACK else ("백 승리" if winner == Board.WHITE else "무승부")
+                        f.write(f"\nResult: {w_str}\n")
+                        f.write(f"Captures: Black {self.board.captures[Board.BLACK]}, White {self.board.captures[Board.WHITE]}\n")
+                except Exception:
+                    pass
             self._handle_game_over(winner)
             return
 

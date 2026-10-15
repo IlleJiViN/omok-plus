@@ -26,10 +26,7 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
-try:
-    from alphaomok.engine.board import Board
-except ImportError:
-    from engine.board import Board
+from engine.board import Board
 
 
 class OmokGUI:
@@ -347,38 +344,24 @@ class OmokGUI:
 
         try:
             if "SmartPlayer" in mode:
-                try:
-                    from alphaomok.players.smart_player import SmartPlayer
-                except ImportError:
-                    from players.smart_player import SmartPlayer
+                from players.smart_player import SmartPlayer
                 self.ai_instance = SmartPlayer(self.ai_player_id)
             elif "RLMCTSPlayer" in mode:
-                try:
-                    from alphaomok.players.rl_mcts_player import RLMCTSPlayer
-                except ImportError:
-                    from players.rl_mcts_player import RLMCTSPlayer
+                from players.rl_mcts_player import RLMCTSPlayer
                 self.ai_instance = RLMCTSPlayer(
                     self.ai_player_id,
+                    checkpoint_path=os.path.join(PROJECT_ROOT, "models", "checkpoints", "rl_model_best.pt"),
                     default_sims=50
                 )
             elif "HeuristicSearchPlayer" in mode:
-                try:
-                    from alphaomok.players.heuristic_search_player import HeuristicSearchPlayer
-                except ImportError:
-                    from players.heuristic_search_player import HeuristicSearchPlayer
-                self.ai_instance = HeuristicSearchPlayer(self.ai_player_id, max_depth=2)
+                from players.heuristic_search_player import HeuristicSearchPlayer
+                self.ai_instance = HeuristicSearchPlayer(self.ai_player_id, depth=2)
             elif "SimplePlayer" in mode:
-                try:
-                    from alphaomok.players.simpleplayer import SimplePlayer
-                except ImportError:
-                    from players.simpleplayer import SimplePlayer
+                from players.simpleplayer import SimplePlayer
                 self.ai_instance = SimplePlayer(self.ai_player_id)
         except Exception as e:
             print(f"Failed to initialize {mode}: {e}")
-            try:
-                from alphaomok.players.simpleplayer import SimplePlayer
-            except ImportError:
-                from players.simpleplayer import SimplePlayer
+            from players.simpleplayer import SimplePlayer
             self.ai_instance = SimplePlayer(self.ai_player_id)
 
     def _on_ai_mode_changed(self, event=None):
@@ -404,6 +387,21 @@ class OmokGUI:
         self.last_timer_tick = time.time()
 
         self.history_text.delete("1.0", tk.END)
+
+        # Setup auto-save replay file in logs/replays/
+        replays_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "logs", "replays")
+        os.makedirs(replays_dir, exist_ok=True)
+        timestamp = time.strftime("%Y%m%d_%H%M%S")
+        self.replay_filepath = os.path.join(replays_dir, f"replay_{timestamp}.txt")
+        try:
+            with open(self.replay_filepath, "w", encoding="utf-8") as f:
+                f.write(f"=== Omok++ Match Replay [{time.strftime('%Y-%m-%d %H:%M:%S')}] ===\n")
+                f.write(f"Mode: {self.ai_combo.get()}\n")
+                f.write(f"Human Color: {'White' if self.human_player == Board.WHITE else 'Black'}\n")
+                f.write("=" * 50 + "\n\n")
+        except Exception:
+            self.replay_filepath = None
+
         self._init_ai_player()
         self._update_scoreboard()
         self._redraw_board()
@@ -498,6 +496,14 @@ class OmokGUI:
         self.history_text.insert(tk.END, log_entry)
         self.history_text.see(tk.END)
 
+        # Write to replay file
+        if hasattr(self, 'replay_filepath') and self.replay_filepath:
+            try:
+                with open(self.replay_filepath, "a", encoding="utf-8") as f:
+                    f.write(log_entry)
+            except Exception:
+                pass
+
         # Check terminal state
         is_over, winner = self.board.check_game_status()
 
@@ -505,6 +511,14 @@ class OmokGUI:
         self._update_scoreboard()
 
         if is_over:
+            if hasattr(self, 'replay_filepath') and self.replay_filepath:
+                try:
+                    with open(self.replay_filepath, "a", encoding="utf-8") as f:
+                        w_str = "흑 승리" if winner == Board.BLACK else ("백 승리" if winner == Board.WHITE else "무승부")
+                        f.write(f"\nResult: {w_str}\n")
+                        f.write(f"Captures: Black {self.board.captures[Board.BLACK]}, White {self.board.captures[Board.WHITE]}\n")
+                except Exception:
+                    pass
             self._handle_game_over(winner)
             return
 
