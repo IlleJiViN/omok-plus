@@ -15,12 +15,13 @@ from typing import List, Optional, Union
 
 from alphaomok.api import AlphaOmok, Game, AnalysisResult
 from alphaomok.engine.board import Board
+from alphaomok.players.grandmaster_player import GrandmasterPlayer
 from alphaomok.players.smart_player import SmartPlayer
 from alphaomok.players.simpleplayer import SimplePlayer
 from alphaomok.players.randomplayer import RandomPlayer
 from alphaomok.players.humanplayer import HumanPlayer
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 
 def analyze(board: Union[List[List[int]], Board],
@@ -56,6 +57,7 @@ __all__ = [
     "Game",
     "Board",
     "AnalysisResult",
+    "GrandmasterPlayer",
     "SmartPlayer",
     "SimplePlayer",
     "RandomPlayer",

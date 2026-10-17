@@ -26,13 +26,14 @@ class TestAlphaOmokSDK(unittest.TestCase):
         """Verify package import, version, and exposed public symbols."""
         import alphaomok
 
-        self.assertEqual(alphaomok.__version__, "1.0.0")
+        self.assertEqual(alphaomok.__version__, "1.1.0")
 
         # Required public symbols
         self.assertTrue(hasattr(alphaomok, "AlphaOmok"))
         self.assertTrue(hasattr(alphaomok, "Game"))
         self.assertTrue(hasattr(alphaomok, "Board"))
         self.assertTrue(hasattr(alphaomok, "AnalysisResult"))
+        self.assertTrue(hasattr(alphaomok, "GrandmasterPlayer"))
         self.assertTrue(hasattr(alphaomok, "SmartPlayer"))
         self.assertTrue(hasattr(alphaomok, "SimplePlayer"))
         self.assertTrue(hasattr(alphaomok, "RandomPlayer"))

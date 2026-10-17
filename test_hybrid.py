@@ -1,66 +1,12 @@
-import sys, time
+import sys
+import time
+
 sys.path.insert(0, 'C:/Users/pc/Downloads')
 sys.path.insert(0, 'C:/Users/pc/omok_project')
-import torch
-import numpy as np
+
 from engine.board import Board
-from friend_agent import AgentPlayer, to_rc, to_idx, BoardLightOfBucks
-from models.policy_value_net import PolicyValueNet
-
-class GrandmasterAlphaOmok(AgentPlayer):
-    """
-    Grandmaster AlphaOmok:
-    Preserves full mathematical integrity of VCF/VCT deep threat verification,
-    while replacing handcrafted heuristic evaluations with the 7.88M ResNet-10 Neural Brain.
-    """
-    def __init__(self, color):
-        super().__init__(color)
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        ckpt = torch.load('C:/Users/pc/omok_project/models/checkpoints/rl_model_best.pt', map_location=self.device)
-        self.net = PolicyValueNet.create_2x().to(self.device)
-        st = ckpt.get('model_state_dict') or ckpt
-        self.net.load_state_dict(st)
-        self.net.eval()
-        self.sim_board = Board()
-
-    def _neural_rank(self, candidates):
-        if not candidates:
-            return None
-        if len(candidates) == 1:
-            return candidates[0]
-        self.sim_board.grid = self.engine.to_external()
-        probs, _ = self.net.predict(self.sim_board, self.color, self.device)
-        return max(candidates, key=lambda idx: probs[to_rc(idx)[0] * 19 + to_rc(idx)[1]])
-
-    def _tie_search(self, turn, ties):
-        # Override tie search with pure ResNet-10 neural policy
-        return self._neural_rank(ties)
-
-    def _fallback_pick(self, turn, cands, l1_pass, label, nodes):
-        # If there are surviving moves that don't lose immediately, let the neural net pick!
-        st = self.stats
-        ln = turn.ln
-        l1 = turn.l1
-        l2 = turn.l2
-
-        if l1_pass:
-            # Pick neural best among l1 passing moves
-            pick = self._neural_rank(l1_pass)
-            st['last_vcf'] = label
-            if pick in l2:
-                st['last_vct'] = 'unknown' if l2[pick] is None else 'lost'
-            return self._done(pick, turn, nodes)
-
-        alive = [m for m in cands if ln.get(m) is False]
-        if alive:
-            pick = self._neural_rank(alive)
-        elif cands:
-            pick = self._neural_rank(cands)
-        else:
-            pick = None
-
-        st['last_vcf'] = 'lost' if label == 'break' else 'checked'
-        return self._done(pick, turn, nodes)
+from friend_agent import AgentPlayer
+from players.grandmaster_player import GrandmasterPlayer as GrandmasterAlphaOmok
 
 
 def run_match(black_is_alphaomok=True):
